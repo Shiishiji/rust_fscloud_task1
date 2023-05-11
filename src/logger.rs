@@ -10,12 +10,16 @@ pub(crate) async fn log_server_start(config: AppRunConfiguration) -> Result<()> 
     let destination = vec![".", "var", "log"].join(&MAIN_SEPARATOR.to_string());
     let filepath = vec![
         destination.clone(),
-        sanitize_filename::sanitize_with_options(filename, sanitize_filename::Options {
-            truncate: true,
-            windows: true,
-            replacement: ""
-        })
-    ].join(&MAIN_SEPARATOR.to_string());
+        sanitize_filename::sanitize_with_options(
+            filename,
+            sanitize_filename::Options {
+                truncate: true,
+                windows: true,
+                replacement: "",
+            },
+        ),
+    ]
+    .join(&MAIN_SEPARATOR.to_string());
 
     fs::create_dir_all(destination.clone()).await?;
 

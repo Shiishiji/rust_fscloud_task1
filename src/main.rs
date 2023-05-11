@@ -12,7 +12,7 @@ use model::*;
 async fn main() -> Result<()> {
     let app_conf = AppRunConfiguration {
         run_time: Local::now(),
-        listen_ip: String::from("127.0.0.1"),
+        listen_ip: String::from("0.0.0.0"),
         listen_port: 8080,
     };
 
