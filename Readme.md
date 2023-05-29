@@ -2,7 +2,7 @@
 <i>Written with RUST</i> 🦀
 
 ## Multi-stage and Single-stage comparision
-<img src="./comparision.jpg" alt="single_stage=3.31GB; multi_stage=95.1MB">
+<img src="doc/comparision.jpg" alt="single_stage=3.31GB; multi_stage=95.1MB">
 
 ## Build & Run
 * Build

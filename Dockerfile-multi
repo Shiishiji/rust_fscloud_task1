@@ -33,12 +33,9 @@ COPY --from=builder /app/src/rust_fscloud_task1/target/release/rust_fscloud_task
 LABEL author="Damian Szopiński"
 LABEL maintainer="shiishiji.dev@gmail.com"
 LABEL org.label-schema.schema-version="1.0"
-LABEL org.label-schema.build-date=$BUILD_DATE
 LABEL org.label-schema.name="siguard/rust_fscloud_task1:multi"
 LABEL org.label-schema.description="Pollub task 1 for cloud laboratory"
 LABEL org.label-schema.vcs-url="https://github.com/Shiishiji/rust_fscloud_task1"
-LABEL org.label-schema.vcs-ref=$VCS_REF
-LABEL org.label-schema.version=$BUILD_VERSION
 LABEL org.label-schema.docker.cmd="docker run -p 8080:8080 -v ./var:/app/var --rm -it rust_fscloud_task1:multi"
 
 CMD [ "/app/rust_fscloud_task1" ]
