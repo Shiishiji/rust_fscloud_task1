@@ -11,8 +11,10 @@ pub(crate) async fn hello(req: HttpRequest) -> impl Responder {
         .expect("Unable to get IP address.")
         .clone();
 
+    println!("Connected from ip address: {}", ip);
+
     let time: String = match ip {
-        "127.0.0.1" | "0.0.0.0" | "localhost" => {
+        "172.17.0.1" | "127.0.0.1" | "0.0.0.0" | "localhost" => {
             let local: DateTime<Local> = Local::now();
             local.to_string()
         }
