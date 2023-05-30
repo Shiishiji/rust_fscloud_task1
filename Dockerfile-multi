@@ -1,0 +1,41 @@
+# syntax = docker/dockerfile:1.5.2
+
+FROM rust:1.69 as builder
+
+WORKDIR /app/src/
+RUN rustup target add x86_64-unknown-linux-musl && \
+    apt-get update && \
+    apt-get install -yq \
+        libssl-dev \
+        pkgconf \
+    && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    USER=root cargo new rust_fscloud_task1 --bin
+
+# Build dummy app
+WORKDIR /app/src/rust_fscloud_task1
+COPY Cargo.lock Cargo.toml ./
+RUN cargo build --release
+
+# Build actual app
+COPY src ./src
+RUN cargo install --path .
+
+
+FROM debian:stable-slim
+
+WORKDIR /app
+EXPOSE 8080
+
+COPY --from=builder /app/src/rust_fscloud_task1/target/release/rust_fscloud_task1 ./
+
+# Labels.
+LABEL author="Damian Szopiński"
+LABEL maintainer="shiishiji.dev@gmail.com"
+LABEL org.label-schema.schema-version="1.0"
+LABEL org.label-schema.name="siguard/rust_fscloud_task1:multi"
+LABEL org.label-schema.description="Pollub task 1 for cloud laboratory"
+LABEL org.label-schema.vcs-url="https://github.com/Shiishiji/rust_fscloud_task1"
+LABEL org.label-schema.docker.cmd="docker run -p 8080:8080 -v ./var:/app/var --rm -it rust_fscloud_task1:multi"
+
+CMD [ "/app/rust_fscloud_task1" ]
