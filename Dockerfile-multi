@@ -1,24 +1,38 @@
 # syntax = docker/dockerfile:1.5.2
-FROM rust:1.69 as builder
+FROM --platform=$BUILDPLATFORM rust:1.69 as builder
 
 WORKDIR /app/src/
-RUN --mount=type=cache,target=/var/cache/apt  --mount=type=cache,target=/var/lib/apt \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -yq \
+        musl-tools \
         libssl-dev \
         pkgconf \
+        libudev-dev \
     && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     USER=root cargo new rust_fscloud_task1 --bin
 
+ARG TARGETPLATFORM
+RUN case "$TARGETPLATFORM" in \
+  "linux/arm/v7")  \
+    export CC="/home/ibi/x-tools/arm-unknown-linux-gnueabihf/bin/arm-unknown-linux-gnueabihf-gcc" ;  \
+    echo armv7-unknown-linux-musleabihf > /rust_target.txt ;; \
+  "linux/arm64") echo aarch64-apple-ios > /rust_target.txt ;; \
+  "linux/amd64") echo x86_64-unknown-linux-gnu > /rust_target.txt ;; \
+  *) echo $TARGETPLATFORM ; exit 1 ;; \
+esac
+RUN rustup target add $(cat /rust_target.txt)
+
 # Build dummy app
 WORKDIR /app/src/rust_fscloud_task1
 COPY --link Cargo.lock Cargo.toml ./
-RUN cargo build --release
+RUN cargo build --release --target $(cat /rust_target.txt)
 
 # Build actual app
 COPY --link src ./src
-RUN cargo install --path .
+RUN cargo install --target $(cat /rust_target.txt) --path .
+
+RUN mv /app/src/rust_fscloud_task1/target/$(cat /rust_target.txt)/* /app/src/rust_fscloud_task1/target
 
 
 FROM debian:stable-slim
